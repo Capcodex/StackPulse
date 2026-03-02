@@ -127,3 +127,22 @@ Ce document retrace les actions concrètes effectuées sur le code source de Sta
   - Ajout du fetch distant asynchrone pour populer automatiquement le composant ShadCN `<MultiSelect>` et implémentation de la fonction d'update avec feedback asynchrone.
 
 ![Stack Fingerprint Populated](file:///Users/alexandremasson/.gemini/antigravity/brain/aad5e5b2-4c6f-424b-831b-f356817186d8/stack_fingerprint_verified_1772485713310.png)
+
+### QA.2 Validation (Stack Fingerprint Persistence)
+- Le test End-to-End automatique (modification des tags, sauvegarde en base et Page Reload `F5`) est validé avec succès. Les modifications résistent au rechargement de la page Next.js :
+
+![Persistence Verified](file:///Users/alexandremasson/.gemini/antigravity/brain/aad5e5b2-4c6f-424b-831b-f356817186d8/stack_fingerprint_persistence_verified_1772486697354.png)
+
+### 15. Crawler n8n - Phase 1 & 2 (US.4)
+- **Objectif :** Préparer l'ingestion des données (GitHub, Arxiv, Blogs) via un crawler externe n8n autonome et sécurisé.
+- **Actions réalisées :**
+  - Validation et réorganisation complète du backlog de tâches généré par l'Orchestrateur via Notion vers un nouveau plan de match phasé en 5 étapes.
+  - **Phase 1 (Base de données) :** 
+    - Création de la migration SQL unique (`00005_n8n_crawler_schema.sql`) contenant la table unifiée `content_items` pour centraliser toutes les sources avec contrainte UNIQUE (upsert logic).
+    - Création de la table `system_health_logs` pour l'observabilité.
+    - Création des RLS policies limitant l'écriture sauvage au seul `service_role` de Supabase.
+    - Exécution de la migration SQL à distance avec succès via l'API Management Supabase.
+  - **Phase 2 (Configuration & Connectivité) :**
+    - Génération du `docker-compose.yml` incluant n8n et Redis.
+    - Création du template `.env` local pour paramétrer le nœud n8n.
+    - Élaboration du document d'architecture détaillé `docs/architecture/N8N_SUPABASE_POLICY.md` précisant les rôles, les clés de chiffrement et le mapping réseau.

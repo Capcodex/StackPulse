@@ -16,11 +16,11 @@ if not NOTION_TOKEN or not DATABASE_ID:
 notion = Client(auth=NOTION_TOKEN)
 
 properties = {
-    "Name": {"title": [{"text": {"content": "US.3.6: Mémorisation et visualisation de la Stack (Fingerprint)"}}]},
+    "Name": {"title": [{"text": {"content": "US.4: Crawler n8n (GitHub, Arxiv, Blogs) & stockage DB"}}]},
     "Status": {"select": {"name": "Todo"}},
-    "Category": {"select": {"name": "Coder"}},
+    "Category": {"select": {"name": "Planner"}},
     "Priority": {"select": {"name": "High"}},
-    "Description": {"rich_text": [{"text": {"content": "J'aimerais que lorsque l'on crée son profil lors de la connexion (Onboarding Persona), cela garde en mémoire la stack technique par défaut et qu'on puisse la visualiser/modifier ensuite sur la page Dashboard > Stack Fingerprint.\n\nActions:\n1. S'assurer que les tags par défaut du métier sont insérés dans la table `user_stacks` lors du choix du Persona.\n2. Fetcher et afficher ces tags pré-remplis sur la page `/stack-fingerprint`."}}]}
+    "Description": {"rich_text": [{"text": {"content": "L'objectif de cette tâche est d'implémenter l'ingestion de données avec n8n.\nOn doit pouvoir récupérer des sources depuis GitHub, Arxiv ou des blogs techniques, crawler leur contenu et le stocker proprement dans la base vectorielle ou relationnelle de Supabase."}}]}
 }
 
 try:
