@@ -1,0 +1,56 @@
+```tsx
+// Exemple de modification à apporter à votre composant de barre latérale existant.
+// Le contenu exact de votre sidebar.tsx peut varier.
+
+import Link from "next/link";
+import { BarChart, Home, Settings, Users, Radar } from "lucide-react"; // Importer l'icône Radar
+import { cn } from "@/lib/utils";
+import { buttonVariants } from "@/components/ui/button"; // Assurez-vous d'importer buttonVariants
+
+interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {
+  // Vos props existantes
+}
+
+export function Sidebar({ className }: SidebarProps) {
+  const currentPath = "/dashboard/radar"; // Vous devrez implémenter une logique pour obtenir le chemin actuel
+
+  const navItems = [
+    { href: "/dashboard", label: "Dashboard", icon: Home },
+    { href: "/dashboard/analytics", label: "Analytiques", icon: BarChart },
+    { href: "/dashboard/users", label: "Utilisateurs", icon: Users },
+    { href: "/dashboard/radar", label: "Radar Stratégique", icon: Radar }, // NOUVEAU LIEN
+    { href: "/dashboard/settings", label: "Paramètres", icon: Settings },
+  ];
+
+  return (
+    <div className={cn("pb-12 border-r border-border h-full bg-background", className)}>
+      <div className="space-y-4 py-4">
+        <div className="px-3 py-2">
+          <h2 className="mb-2 px-4 text-lg font-semibold tracking-tight text-foreground">
+            Aperçu
+          </h2>
+          <div className="space-y-1">
+            {navItems.map((item) => (
+              <Link key={item.href} href={item.href}>
+                <span
+                  className={cn(
+                    buttonVariants({ variant: "ghost" }),
+                    currentPath === item.href
+                      ? "bg-muted hover:bg-muted text-primary"
+                      : "hover:bg-transparent hover:underline text-muted-foreground",
+                    "w-full justify-start gap-2"
+                  )}
+                >
+                  <item.icon className="h-4 w-4" />
+                  {item.label}
+                </span>
+              </Link>
+            ))}
+          </div>
+        </div>
+        {/* Autres sections de votre sidebar */}
+      </div>
+    </div>
+  );
+}
+```
