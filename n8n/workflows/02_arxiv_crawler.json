@@ -1,0 +1,237 @@
+{
+    "name": "Arxiv Crawler (To Supabase)",
+    "nodes": [
+        {
+            "parameters": {
+                "rule": {
+                    "interval": [
+                        {
+                            "field": "hours",
+                            "hoursInterval": 24
+                        }
+                    ]
+                }
+            },
+            "id": "2de09e2e-8c31-4e49-8c2f-8700efda69a8",
+            "name": "Schedule Trigger",
+            "type": "n8n-nodes-base.scheduleTrigger",
+            "typeVersion": 1,
+            "position": [
+                380,
+                240
+            ]
+        },
+        {
+            "parameters": {
+                "url": "http://export.arxiv.org/api/query",
+                "sendQuery": true,
+                "queryParameters": {
+                    "parameters": [
+                        {
+                            "name": "search_query",
+                            "value": "cat:cs.AI OR cat:cs.LG"
+                        },
+                        {
+                            "name": "sortBy",
+                            "value": "lastUpdatedDate"
+                        },
+                        {
+                            "name": "sortOrder",
+                            "value": "descending"
+                        },
+                        {
+                            "name": "max_results",
+                            "value": "20"
+                        }
+                    ]
+                },
+                "options": {}
+            },
+            "id": "e98e72c8-89c5-4ad9-bf0c-5ee2c7efee46",
+            "name": "HTTP Request (Arxiv API)",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.1,
+            "position": [
+                600,
+                240
+            ]
+        },
+        {
+            "parameters": {
+                "options": {}
+            },
+            "id": "4004cde6-65c3-42e5-ad8e-8a9d18b6eaf4",
+            "name": "XML to JSON",
+            "type": "n8n-nodes-base.xml",
+            "typeVersion": 1,
+            "position": [
+                820,
+                240
+            ]
+        },
+        {
+            "parameters": {
+                "fieldToSplitOut": "feed.entry",
+                "options": {}
+            },
+            "id": "5fa82eb0-31f4-4361-bd80-482a85f81fe4",
+            "name": "Item Lists",
+            "type": "n8n-nodes-base.itemLists",
+            "typeVersion": 2.1,
+            "position": [
+                1040,
+                240
+            ]
+        },
+        {
+            "parameters": {
+                "assignments": {
+                    "assignments": [
+                        {
+                            "id": "9ea4cce4-ce45-4de4-bcec-ff13f9fefee1",
+                            "name": "source_platform",
+                            "value": "arxiv",
+                            "type": "string"
+                        },
+                        {
+                            "id": "52c806de-349c-4ebc-8064-92736e4f16bc",
+                            "name": "type",
+                            "value": "article",
+                            "type": "string"
+                        },
+                        {
+                            "id": "f5ed3cc3-f548-4fd5-8a8b-18f15b8163f9",
+                            "name": "source_id",
+                            "value": "={{ $json.id }}",
+                            "type": "string"
+                        },
+                        {
+                            "id": "577bfff2-c3da-4db0-bb8b-d779bb6cdab8",
+                            "name": "url",
+                            "value": "={{ $json.id }}",
+                            "type": "string"
+                        },
+                        {
+                            "id": "62ebddec-90aa-43ad-8d19-eeede8be1288",
+                            "name": "title",
+                            "value": "={{ $json.title }}",
+                            "type": "string"
+                        },
+                        {
+                            "id": "8bbbb4eb-3957-4188-acf8-8eeaba759df9",
+                            "name": "content",
+                            "value": "={{ $json.summary }}",
+                            "type": "string"
+                        },
+                        {
+                            "id": "b3e04e0e-9188-4def-bcc2-67129b0a1a09",
+                            "name": "published_at",
+                            "value": "={{ $json.published }}",
+                            "type": "string"
+                        },
+                        {
+                            "id": "7dc14361-9f93-41bb-b8ad-6d601d51a61c",
+                            "name": "author",
+                            "value": "={{ { name: $json.author.name || 'Unknown' } }}",
+                            "type": "object"
+                        }
+                    ]
+                },
+                "options": {}
+            },
+            "id": "76620593-ba32-411a-8280-99af3b64aa6e",
+            "name": "Map to Supabase Schema",
+            "type": "n8n-nodes-base.set",
+            "typeVersion": 3.2,
+            "position": [
+                1260,
+                240
+            ]
+        },
+        {
+            "parameters": {
+                "operation": "upsert",
+                "table": "content_items",
+                "matchColumns": "source_platform,source_id",
+                "dataToSend": "autoMapInputData"
+            },
+            "id": "e22709e9-d9db-4ab4-8395-8178a9c3ce17",
+            "name": "Supabase API (Upsert)",
+            "type": "n8n-nodes-base.supabase",
+            "typeVersion": 1,
+            "position": [
+                1480,
+                240
+            ],
+            "credentials": {
+                "supabaseApi": {
+                    "id": "",
+                    "name": "Supabase API"
+                }
+            }
+        }
+    ],
+    "pinData": {},
+    "connections": {
+        "Schedule Trigger": {
+            "main": [
+                [
+                    {
+                        "node": "HTTP Request (Arxiv API)",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "HTTP Request (Arxiv API)": {
+            "main": [
+                [
+                    {
+                        "node": "XML to JSON",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "XML to JSON": {
+            "main": [
+                [
+                    {
+                        "node": "Item Lists",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Item Lists": {
+            "main": [
+                [
+                    {
+                        "node": "Map to Supabase Schema",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Map to Supabase Schema": {
+            "main": [
+                [
+                    {
+                        "node": "Postgres (Supabase Upsert)",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    },
+    "active": false,
+    "settings": {
+        "executionOrder": "v1"
+    },
+    "versionId": "f06c10e0-c247-4959-bd9d-0726d1ed5d53"
+}

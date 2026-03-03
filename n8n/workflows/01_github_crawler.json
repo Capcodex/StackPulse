@@ -1,0 +1,213 @@
+{
+    "name": "GitHub Crawler (To Supabase)",
+    "nodes": [
+        {
+            "parameters": {
+                "rule": {
+                    "interval": [
+                        {
+                            "field": "hours",
+                            "hoursInterval": 24
+                        }
+                    ]
+                }
+            },
+            "id": "58e11ee9-b9d9-4b68-8094-1a3eb7eaafbd",
+            "name": "Schedule Trigger",
+            "type": "n8n-nodes-base.scheduleTrigger",
+            "typeVersion": 1,
+            "position": [
+                380,
+                240
+            ]
+        },
+        {
+            "parameters": {
+                "url": "=https://api.github.com/search/repositories?q=language:typescript+stars:>500+created:>{{ $today.minus({days: 7}).toISODate() }}&sort=stars&order=desc",
+                "sendHeaders": true,
+                "headerParameters": {
+                    "parameters": [
+                        {
+                            "name": "Accept",
+                            "value": "application/vnd.github.v3+json"
+                        }
+                    ]
+                },
+                "options": {}
+            },
+            "id": "e633d76b-748d-4f05-be12-25cf5b066f12",
+            "name": "HTTP Request (GitHub Search API)",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.1,
+            "position": [
+                600,
+                240
+            ],
+            "credentials": {
+                "httpHeaderAuth": {
+                    "id": "ENTER_YOUR_CREDENTIALS_ID_HERE",
+                    "name": "GitHub PAT Header Auth"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "fieldToSplitOut": "items",
+                "options": {}
+            },
+            "id": "4e71ccae-ff03-4ab0-b30f-b2d9d1def13c",
+            "name": "Item Lists",
+            "type": "n8n-nodes-base.itemLists",
+            "typeVersion": 2.1,
+            "position": [
+                820,
+                240
+            ]
+        },
+        {
+            "parameters": {
+                "assignments": {
+                    "assignments": [
+                        {
+                            "id": "11abf445-4df3-49ac-99e2-ba0091aa0ef4",
+                            "name": "source_platform",
+                            "value": "github",
+                            "type": "string"
+                        },
+                        {
+                            "id": "a9018e6b-a2eb-4560-a54b-b0b3e55c70cb",
+                            "name": "type",
+                            "value": "repository",
+                            "type": "string"
+                        },
+                        {
+                            "id": "13919e8c-8f2c-4b53-a5ff-def9a0eb5ee8",
+                            "name": "source_id",
+                            "value": "={{ $json.id.toString() }}",
+                            "type": "string"
+                        },
+                        {
+                            "id": "5865bb4e-862d-41a4-afc3-dfaf2e14e1a1",
+                            "name": "url",
+                            "value": "={{ $json.html_url }}",
+                            "type": "string"
+                        },
+                        {
+                            "id": "6a9f6d72-4e4f-4d3f-b3cc-645366c8f411",
+                            "name": "title",
+                            "value": "={{ $json.full_name }}",
+                            "type": "string"
+                        },
+                        {
+                            "id": "c161ac36-aa92-4161-9e79-88096f9bf0a3",
+                            "name": "content",
+                            "value": "={{ $json.description || 'No description provided.' }}",
+                            "type": "string"
+                        },
+                        {
+                            "id": "51ef7c23-3ed6-49eb-bbcb-12dce691b001",
+                            "name": "published_at",
+                            "value": "={{ $json.created_at }}",
+                            "type": "string"
+                        },
+                        {
+                            "id": "9d4135ab-38f3-4f96-be60-f47a61d763af",
+                            "name": "author",
+                            "value": "={{ { name: $json.owner.login, avatar_url: $json.owner.avatar_url, url: $json.owner.html_url } }}",
+                            "type": "object"
+                        },
+                        {
+                            "id": "42aa4c33-8531-4191-be7d-30fbb82ddee4",
+                            "name": "metadata",
+                            "value": "={{ { stars: $json.stargazers_count, forks: $json.forks_count, language: $json.language } }}",
+                            "type": "object"
+                        }
+                    ]
+                },
+                "options": {}
+            },
+            "id": "1a6c4fdf-97c9-44be-acfc-3cf14a51e626",
+            "name": "Map to Supabase Schema",
+            "type": "n8n-nodes-base.set",
+            "typeVersion": 3.2,
+            "position": [
+                1040,
+                240
+            ]
+        },
+        {
+            "parameters": {
+                "operation": "upsert",
+                "table": "content_items",
+                "matchColumns": "source_platform,source_id",
+                "dataToSend": "autoMapInputData"
+            },
+            "id": "153fa38e-df45-4235-9ed8-dc58a011cd8f",
+            "name": "Supabase API (Upsert)",
+            "type": "n8n-nodes-base.supabase",
+            "typeVersion": 1,
+            "position": [
+                1260,
+                240
+            ],
+            "credentials": {
+                "supabaseApi": {
+                    "id": "",
+                    "name": "Supabase API"
+                }
+            }
+        }
+    ],
+    "pinData": {},
+    "connections": {
+        "Schedule Trigger": {
+            "main": [
+                [
+                    {
+                        "node": "HTTP Request (GitHub Search API)",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "HTTP Request (GitHub Search API)": {
+            "main": [
+                [
+                    {
+                        "node": "Item Lists",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Item Lists": {
+            "main": [
+                [
+                    {
+                        "node": "Map to Supabase Schema",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Map to Supabase Schema": {
+            "main": [
+                [
+                    {
+                        "node": "Postgres (Supabase Upsert)",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    },
+    "active": false,
+    "settings": {
+        "executionOrder": "v1"
+    },
+    "versionId": "f78997a9-fdab-45fa-bb25-780c1eb48a97"
+}

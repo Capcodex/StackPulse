@@ -13,7 +13,6 @@ services:
       - NODE_ENV=production
       - WEBHOOK_URL=https://${SUBDOMAIN}.${DOMAIN_NAME}/
       - GENERIC_TIMEZONE=${GENERIC_TIMEZONE}
-      - N8N_ENCRYPTION_KEY=${N8N_ENCRYPTION_KEY}
       # Database configuration (connecting to Supabase via Postgres)
       - DB_TYPE=postgresdb
       - DB_POSTGRESDB_DATABASE=${DB_POSTGRESDB_DATABASE}
