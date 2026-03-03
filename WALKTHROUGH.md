@@ -147,3 +147,6 @@ Ce document retrace les actions concrètes effectuées sur le code source de Sta
     - Création du template `.env` local pour paramétrer le nœud n8n.
     - Élaboration du document d'architecture détaillé `docs/architecture/N8N_SUPABASE_POLICY.md` précisant les rôles, les clés de chiffrement et le mapping réseau.
     - **Optimisation Réseau (Fix) :** Modification du hostname de la base de données vers l'URL du *Transaction Pooler* Supabase (`aws-1-eu-west-3.pooler.supabase.com:6543`) pour contourner l'impossibilité de Docker Mac de résoudre les DNS IPv6 par défaut. Le conteneur `n8n` est dorénavant nativement branché à la base Cloud.
+  - **Phase 3 (Workflows de Crawling & VPS Deployment) :**
+    - Création des workflows `01_github_crawler.json` et `02_arxiv_crawler.json` en version finale native *Postgres* asynchrone pour optimiser l'insertion des gros lots de données.
+    - Rédaction du guide de déploiement `N8N_VPS_DEPLOYMENT.md` permettant d'automatiser l'hébergement de cette pile Docker sur un serveur Linux externe (contournant nativement les limites réseau Docker Mac).
