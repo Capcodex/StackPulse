@@ -137,23 +137,38 @@
         },
         {
             "parameters": {
-                "operation": "upsert",
-                "table": "content_items",
-                "matchColumns": "source_platform,source_id",
-                "dataToSend": "autoMapInputData"
+                "method": "POST",
+                "url": "https://gxuoceuryofmiuyrkmfn.supabase.co/rest/v1/content_items?on_conflict=source_platform,source_id",
+                "sendHeaders": true,
+                "headerParameters": {
+                    "parameters": [
+                        {
+                            "name": "Prefer",
+                            "value": "resolution=merge-duplicates"
+                        },
+                        {
+                            "name": "apikey",
+                            "value": "DANS_IDENTIFIANT_N8N_OU_ICI"
+                        }
+                    ]
+                },
+                "sendBody": true,
+                "specifyBody": "json",
+                "jsonBody": "={{ $json }}",
+                "options": {}
             },
             "id": "153fa38e-df45-4235-9ed8-dc58a011cd8f",
             "name": "Supabase API (Upsert)",
-            "type": "n8n-nodes-base.supabase",
-            "typeVersion": 1,
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.1,
             "position": [
                 1260,
                 240
             ],
             "credentials": {
-                "supabaseApi": {
+                "httpHeaderAuth": {
                     "id": "",
-                    "name": "Supabase API"
+                    "name": "Header Auth"
                 }
             }
         }
