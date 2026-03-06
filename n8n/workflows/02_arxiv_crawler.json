@@ -85,64 +85,12 @@
         },
         {
             "parameters": {
-                "assignments": {
-                    "assignments": [
-                        {
-                            "id": "9ea4cce4-ce45-4de4-bcec-ff13f9fefee1",
-                            "name": "source_platform",
-                            "value": "arxiv",
-                            "type": "string"
-                        },
-                        {
-                            "id": "52c806de-349c-4ebc-8064-92736e4f16bc",
-                            "name": "type",
-                            "value": "article",
-                            "type": "string"
-                        },
-                        {
-                            "id": "f5ed3cc3-f548-4fd5-8a8b-18f15b8163f9",
-                            "name": "source_id",
-                            "value": "={{ $json.id }}",
-                            "type": "string"
-                        },
-                        {
-                            "id": "577bfff2-c3da-4db0-bb8b-d779bb6cdab8",
-                            "name": "url",
-                            "value": "={{ $json.id }}",
-                            "type": "string"
-                        },
-                        {
-                            "id": "62ebddec-90aa-43ad-8d19-eeede8be1288",
-                            "name": "title",
-                            "value": "={{ $json.title }}",
-                            "type": "string"
-                        },
-                        {
-                            "id": "8bbbb4eb-3957-4188-acf8-8eeaba759df9",
-                            "name": "content",
-                            "value": "={{ $json.summary }}",
-                            "type": "string"
-                        },
-                        {
-                            "id": "b3e04e0e-9188-4def-bcc2-67129b0a1a09",
-                            "name": "published_at",
-                            "value": "={{ $json.published }}",
-                            "type": "string"
-                        },
-                        {
-                            "id": "7dc14361-9f93-41bb-b8ad-6d601d51a61c",
-                            "name": "author",
-                            "value": "={{ { name: $json.author.name || 'Unknown' } }}",
-                            "type": "object"
-                        }
-                    ]
-                },
-                "options": {}
+                "jsCode": "const items = [];\n\nfor (const item of $input.all()) {\n  const data = item.json;\n  items.push({\n    json: {\n      source_platform: 'arxiv',\n      type: 'article',\n      source_id: data.id,\n      url: data.id,\n      title: data.title,\n      content: data.summary,\n      published_at: data.published,\n      author: {\n        name: data.author?.name || 'Unknown'\n      }\n    }\n  });\n}\n\nreturn items;"
             },
             "id": "76620593-ba32-411a-8280-99af3b64aa6e",
             "name": "Map to Supabase Schema",
-            "type": "n8n-nodes-base.set",
-            "typeVersion": 3.2,
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
             "position": [
                 1260,
                 240
