@@ -138,23 +138,22 @@
         {
             "parameters": {
                 "operation": "upsert",
-                "schema": "public",
                 "table": "content_items",
-                "columns": "source_platform, source_id, type, url, title, content, author, published_at, metadata",
-                "upsertKey": "source_platform,source_id"
+                "matchColumns": "source_platform,source_id",
+                "dataToSend": "autoMapInputData"
             },
             "id": "153fa38e-df45-4235-9ed8-dc58a011cd8f",
-            "name": "Postgres (Supabase Upsert)",
-            "type": "n8n-nodes-base.postgres",
-            "typeVersion": 2.2,
+            "name": "Supabase API (Upsert)",
+            "type": "n8n-nodes-base.supabase",
+            "typeVersion": 1,
             "position": [
                 1260,
                 240
             ],
             "credentials": {
-                "postgres": {
-                    "id": "ENTER_YOUR_CREDENTIALS_ID_HERE",
-                    "name": "Supabase Postgres"
+                "supabaseApi": {
+                    "id": "",
+                    "name": "Supabase API"
                 }
             }
         }
